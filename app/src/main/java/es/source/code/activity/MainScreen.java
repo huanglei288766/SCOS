@@ -1,6 +1,7 @@
 package es.source.code.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,20 +29,22 @@ public class MainScreen extends AppCompatActivity implements AdapterView.OnItemC
     private int[] icon = {R.drawable.order, R.drawable.vieworder, R.drawable.account, R.drawable.help};
     private String[] iconName = {"点菜", "查看订单", "登录/注册", "系统帮助"};
 
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
-        user = new User();
+        sharedPreferences = getSharedPreferences("userInfo", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
         flagLogin = 2;
 
-        /** 判断入口 **/
-        intent = getIntent();
-        String msg = intent.getStringExtra("msg");
-        if(msg.equals("FromEntry")){
+        if (sharedPreferences.contains("loginState") && sharedPreferences.getInt("loginState", 0) == 1){
+            flagLogin = 0;
+        }else{
             flagLogin = 2;
-            user = null;
         }
 
         initGridView();
@@ -70,13 +73,6 @@ public class MainScreen extends AppCompatActivity implements AdapterView.OnItemC
         return dataList;
     }
 
-    /**
-     * item点击事件
-     * @param parent
-     * @param view
-     * @param position
-     * @param id
-     */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (position == 2 - flagLogin){
@@ -87,6 +83,11 @@ public class MainScreen extends AppCompatActivity implements AdapterView.OnItemC
             Intent order = new Intent();
             order.setClass(MainScreen.this,FoodView.class);
             MainScreen.this.startActivity(order);
+        }else if (position == 3 - flagLogin){
+//            Toast.makeText(MainScreen.this, "点击了帮助", Toast.LENGTH_LONG).show();
+            Intent helpIntent = new Intent();
+            helpIntent.setClass(MainScreen.this, SCOSHelper.class);
+            MainScreen.this.startActivity(helpIntent);
         }
     }
 
@@ -115,4 +116,5 @@ public class MainScreen extends AppCompatActivity implements AdapterView.OnItemC
                 }
         }
     }
+
 }

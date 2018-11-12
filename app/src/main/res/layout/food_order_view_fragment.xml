@@ -8,6 +8,13 @@
     tools:context=".FoodOrderView">
 
 
+    <ProgressBar
+        android:id="@+id/progressBarFoodOrderView"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
     <TextView
         android:id="@+id/foodSum"
         android:layout_width="120dp"
@@ -37,6 +44,8 @@
         android:id="@+id/foodOrderViewRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        >
+
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

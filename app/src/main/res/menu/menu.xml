@@ -4,16 +4,29 @@
     <item
         android:id="@+id/ordered"
         android:title="@string/ordered"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/viewOrdered"
         android:title="@string/viewOrdered"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/callForService"
         android:title="@string/callForService"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/updateInformation"
+        android:title="实时更新"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/updateServiceTest"
+        android:title="updateServiceTest"
+        app:showAsAction="ifRoom"
+        />
+
 
 </menu>

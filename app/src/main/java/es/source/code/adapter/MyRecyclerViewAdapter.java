@@ -8,7 +8,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.List;
+
 import es.source.code.activity.R;
+import es.source.code.model.FoodInfo;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.MyViewHolder> implements View.OnClickListener{
 
@@ -17,6 +20,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private String data;
     String title;
     private OnRecyclerViewItemClickListener myOnRecyclerViewItemClickListener = null;
+    public int[] store = new int[3];
+
 
 
     public MyRecyclerViewAdapter(Context context, ArrayList datas, String title){
@@ -39,8 +44,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         if (title.equals("未下订单")){
             myViewHolder.chase.setText("退菜");
         }
+        myViewHolder.store.setText("库存" + store[i]);
         myViewHolder.chase.setTag(i);
         myViewHolder.itemView.setTag(i);
+
     }
 
     @Override
@@ -63,13 +70,20 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         }
     }
 
+    public void storeChanged(int[] store) {
+        this.store = store;
+    }
+
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView foodAndWorth;
         Button chase;
+        TextView store;
         public MyViewHolder(View itemView) {
             super(itemView);
             chase = itemView.findViewById(R.id.chase);
             foodAndWorth = itemView.findViewById(R.id.FoodAndWorth);
+            store = itemView.findViewById(R.id.store);
             itemView.setOnClickListener(MyRecyclerViewAdapter.this);
             chase.setOnClickListener(MyRecyclerViewAdapter.this);
         }

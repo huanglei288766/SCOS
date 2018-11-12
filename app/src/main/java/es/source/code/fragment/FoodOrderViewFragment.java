@@ -14,11 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import es.source.code.activity.FoodDetailed;
 import es.source.code.activity.R;
-import es.source.code.activity.SingleIntent;
+import es.source.code.utils.MyAsyncTask;
+import es.source.code.utils.SingleIntent;
 import es.source.code.adapter.MyRecyclerViewAdapterFoodOrderView;
 
 @SuppressLint("ValidFragment")
@@ -33,6 +35,8 @@ public class FoodOrderViewFragment extends Fragment {
     Button orderButton;
     TextView foodSumTextView;
     TextView worthSumTextView;
+    ProgressBar progressBar;
+
     MyRecyclerViewAdapterFoodOrderView myRecyclerViewAdapter;
     SingleIntent singleInstance;
 
@@ -64,6 +68,8 @@ public class FoodOrderViewFragment extends Fragment {
         foodSumTextView = view.findViewById(R.id.foodSum);
         worthSumTextView = view.findViewById(R.id.worthSum);
         orderButton = view.findViewById(R.id.orderButton);
+        progressBar = view.findViewById(R.id.progressBarFoodOrderView);
+        progressBar.setVisibility(View.INVISIBLE);
 
         calFoodSumAndWorthSum(foodSumTextView, worthSumTextView);
 
@@ -73,49 +79,8 @@ public class FoodOrderViewFragment extends Fragment {
             orderButton.setText("结账");
         }
 
-        if (getTitle().equals("未下菜单")){
-            myRecyclerViewAdapter = new MyRecyclerViewAdapterFoodOrderView(context,title);
-        }else{
-            myRecyclerViewAdapter = new MyRecyclerViewAdapterFoodOrderView(context,title);
-        }
+        initRecyclerView();
 
-        recyclerView.setAdapter(myRecyclerViewAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayout.VERTICAL, false));
-
-        myRecyclerViewAdapter.setOnItemClickListener(new MyRecyclerViewAdapterFoodOrderView.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onClick(View v, int position, boolean isButton) {
-                if (isButton){
-                    singleInstance = SingleIntent.getSingleInstance();
-                    try{
-                        Toast.makeText(context, "将退第"+position+"项",Toast.LENGTH_SHORT).show();
-
-                        myRecyclerViewAdapter.tuiCai(position);
-
-                        calFoodSumAndWorthSum(foodSumTextView, worthSumTextView);
-                    }catch (Exception e){
-                        Toast.makeText(context, e.getMessage(),Toast.LENGTH_LONG).show();
-                    }
-                }else{
-                    Intent intent = new Intent();
-                    intent.setClass(context, FoodDetailed.class);
-                    context.startActivity(intent);
-                }
-            }
-        });
-
-        orderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                singleInstance = SingleIntent.getSingleInstance();
-                try {
-                    myRecyclerViewAdapter.tiJiao();
-                }catch (Exception e){
-                    Toast.makeText(context, e.getMessage(),Toast.LENGTH_SHORT);
-                }
-                Toast.makeText(context, "已提交",Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     public String getTitle() {
@@ -148,5 +113,69 @@ public class FoodOrderViewFragment extends Fragment {
             worthSumTextView.setText("菜品总价：" + worthSum[1]);
         }
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser)
+            if (recyclerView != null){
+            initRecyclerView();
+            }
+    }
+
+    public void initRecyclerView(){
+
+        recyclerView = view.findViewById(R.id.foodOrderViewRecycler);
+        foodSumTextView = view.findViewById(R.id.foodSum);
+        worthSumTextView = view.findViewById(R.id.worthSum);
+        orderButton = view.findViewById(R.id.orderButton);
+
+        myRecyclerViewAdapter = new MyRecyclerViewAdapterFoodOrderView(context, title);
+
+        recyclerView.setAdapter(myRecyclerViewAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayout.VERTICAL, false));
+
+        myRecyclerViewAdapter.setOnItemClickListener(new MyRecyclerViewAdapterFoodOrderView.OnRecyclerViewItemClickListener() {
+            @Override
+            public void onClick(View v, int position, boolean isButton) {
+                if (isButton){
+                    singleInstance = SingleIntent.getSingleInstance();
+                    try{
+                        Toast.makeText(context, "将退第"+position+"项",Toast.LENGTH_SHORT).show();
+
+                        myRecyclerViewAdapter.tuiCai(position);
+
+                        calFoodSumAndWorthSum(foodSumTextView, worthSumTextView);
+                    }catch (Exception e){
+                        Toast.makeText(context, e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    Intent intent = new Intent();
+                    intent.setClass(context, FoodDetailed.class);
+                    context.startActivity(intent);
+                }
+            }
+        });
+
+        orderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                singleInstance = SingleIntent.getSingleInstance();
+                if (((Button) v).getText().equals("提交订单")) {
+                    try {
+                        myRecyclerViewAdapter.tiJiao();
+                    } catch (Exception e) {
+                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT);
+                    }
+                    Toast.makeText(context, "已提交", Toast.LENGTH_LONG).show();
+                }else{
+                    MyAsyncTask myAsyncTask = new MyAsyncTask(context, progressBar, orderButton);
+                    myAsyncTask.execute();
+                }
+            }
+        });
+
+    }
+
 
 }

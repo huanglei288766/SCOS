@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import es.source.code.activity.FoodDetailed;
-import es.source.code.activity.SingleIntent;
+import es.source.code.model.FoodInfo;
+import es.source.code.utils.SingleIntent;
 import es.source.code.adapter.MyRecyclerViewAdapter;
 
 
@@ -32,6 +35,8 @@ public class MyFragment extends Fragment {
     MyRecyclerViewAdapter myRecyclerViewAdapter;
     ArrayList<String> datas;
     SingleIntent singleIntent;
+    public List<FoodInfo> foodlist;
+    private int[] store = new int[3];
 
 
     public MyFragment(String title, ArrayList<String> datas){
@@ -65,6 +70,8 @@ public class MyFragment extends Fragment {
         recyclerView.setAdapter(myRecyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayout.VERTICAL, false));
 
+
+
         myRecyclerViewAdapter.setOnItemClickListener(new MyRecyclerViewAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onClick(View v, int position, boolean isButton) {
@@ -97,6 +104,27 @@ public class MyFragment extends Fragment {
             }
         }
         return i;
+    }
+
+    public void refreshStore(List<FoodInfo> foodlist){
+        Log.d("FoodViewFragment", "获取当前foodList");
+        this.foodlist = new ArrayList<>();
+        for (int i = 0; i < foodlist.size(); i++){
+            if (foodlist.get(i).getFoodType() == titleToInt()){
+                this.foodlist.add(foodlist.get(i));
+            }
+        }
+        refresh(this.foodlist);
+    }
+
+    public void refresh(List<FoodInfo> foodlist) {
+        Log.d("FoodViewFragment", "NotifyChanged");
+        for (int i = 0; i < foodlist.size(); i++){
+            int num = foodlist.get(i).getFoodNum();
+            store[num] = foodlist.get(i).getStore();
+            myRecyclerViewAdapter.storeChanged(store);
+            myRecyclerViewAdapter.notifyItemChanged(num);
+        }
     }
 
 }

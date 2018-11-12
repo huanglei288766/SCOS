@@ -8,10 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import es.source.code.activity.R;
-import es.source.code.activity.SingleIntent;
+import es.source.code.utils.SingleIntent;
 
 public class MyRecyclerViewAdapterFoodOrderView extends RecyclerView.Adapter<MyRecyclerViewAdapterFoodOrderView.MyViewHolder> implements View.OnClickListener{
 
@@ -59,8 +57,10 @@ public class MyRecyclerViewAdapterFoodOrderView extends RecyclerView.Adapter<MyR
         singleIntent = SingleIntent.getSingleInstance();
         for(type = 0; type < 4; type++){
             for (num = 0; num < 20; num++){
-                if (singleIntent.itemList[type][num] > 0){
-                    k++;
+                if (title.equals("未下订单")){
+                    if (singleIntent.itemList[type][num] > 0)k++;
+                }else{
+                    if (singleIntent.paidList[type][num] > 0) k++;
                 }
             }
         }
@@ -84,6 +84,8 @@ public class MyRecyclerViewAdapterFoodOrderView extends RecyclerView.Adapter<MyR
         }
     }
 
+
+
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView foodAndWorth;
         Button chase;
@@ -105,6 +107,9 @@ public class MyRecyclerViewAdapterFoodOrderView extends RecyclerView.Adapter<MyR
         this.myOnRecyclerViewItemClickListener = listener;
     }
 
+    /*
+    未下菜单
+     */
     private void findItemInItemList(String typeAndNum){
         for (type = 0; type < 4; type ++){
             for (num = 0; num < 20; num++){
@@ -118,12 +123,21 @@ public class MyRecyclerViewAdapterFoodOrderView extends RecyclerView.Adapter<MyR
 
     private void findItemInItemListOnCreate(int position){
         singleIntent = SingleIntent.getSingleInstance();
-        int flag = -1;
-        for (type = 0; type < 4; type++)
-            for (num = 0; num < 20; num++) {
-                if (singleIntent.itemList[type][num] != 0) flag++;
-                if (flag == position) return;
-            }
+        if (title.equals("未下订单")){
+            int flag = -1;
+            for (type = 0; type < 4; type++)
+                for (num = 0; num < 20; num++) {
+                    if (singleIntent.itemList[type][num] != 0) flag++;
+                    if (flag == position) return;
+                }
+        }else{
+            int flag = -1;
+            for (type = 0; type < 4; type++)
+                for (num = 0; num < 20; num++) {
+                    if (singleIntent.paidList[type][num] != 0) flag++;
+                    if (flag == position) return;
+                }
+        }
     }
 
     private int findIndexWithPosition(){

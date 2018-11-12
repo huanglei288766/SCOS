@@ -1,4 +1,4 @@
-package es.source.code.activity;
+package es.source.code.utils;
 
 public class SingleIntent{
 
@@ -35,13 +35,10 @@ public class SingleIntent{
         for (int i = 0; i < 4; i++){
             for (int j = 0; j < 20; j++){
                 paidList[i][j] = itemList[i][j];
-            }
-        }
-        for (int i = 0; i < 4; i++){
-            for (int j = 0; j < 20; j++){
                 itemList[i][j] = 0;
             }
         }
+
     }
 
     public void alreadyPaid(){
